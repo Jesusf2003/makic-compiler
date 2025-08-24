@@ -3,6 +3,7 @@
 
 #include <cctype>
 #include <iostream>
+#include <filesystem>
 #ifdef WIN32
 #include <direct.h>
 #else
@@ -16,15 +17,29 @@ namespace cmdlib
     int checkParm(char *check);
     void getWorkdir(char *out);
     void makeDir(char *path);
-
     void setDirFromPath(char *path);
-    char* expandPath(char *path);
+
+    // paths
+    char *expandPath(char *path);
+    void defaultExt(char *path, char *ext, size_t bufsize);
+    void defaultPath(char *path, size_t pathSize, char *basepath);
 
     // utils
+    void stripFilename(char *path);
+    void stripExt(char *path);
+
+    void extractFilePath(const char *path, char *dest, size_t destSize);
+    void extractFileBase(const char *path, char *dest, size_t destSize);
+    void extractFileExt(const char *path, char *dest, size_t destSize);
+
     int strncasecmp(const char *s1, const char *s2, int n);
     int strcasecmp(char *s1, char *s2);
     char *strToUpper(char *start);
     char *strtoLower(char *start);
+
+    // files
+    void createPath(const char *path);
+    void copyFile(char *from, char *to);
 }
 
 #endif
