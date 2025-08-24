@@ -130,15 +130,79 @@ namespace cmdlib
         snprintf(path, pathSize, "%s%s", basepath, temp);
     }
 
+    int parseNum(char *str)
+    {
+        int val = 0;
+        int sign = 1;
+        if (*str == '-')
+        {
+            sign = -1;
+            str++;
+        }
+        while (*str >= '0' && *str <= '9')
+        {
+            val = val * 10 + (*str - '0');
+            str++;
+        }
+        return val * sign;
+    }
+
+    short bigShort(short l)
+    {
+        return (short)(((l & 0x00FF) << 8) | ((l & 0xFF00) >> 8));
+    }
+
+    short littleShort(short l)
+    {
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+        return l;
+#else
+        return bigShort();
+#endif
+    }
+
+    int bigLong(int l)
+    {
+        return ((l & 0x000000FF) << 24) |
+               ((l & 0x0000FF00) << 8) |
+               ((l & 0x00FF0000) >> 8) |
+               ((l & 0xFF000000) >> 24);
+    }
+
+    int littleLong(int l)
+    {
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+        return l;
+#else
+        return BigLong(l);
+#endif
+    }
+
+    float bigFloat(float l)
+    {
+        int temp = *reinterpret_cast<int *>(&l);
+        temp = bigLong(temp);
+        return *reinterpret_cast<float *>(&temp);
+    }
+
+    float littleFloat(float l)
+    {
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+        return l;
+#else
+        return BigFloat(l);
+#endif
+    }
+
     FILE *safeOpenWrite(char *filename)
     {
-        #ifdef WIN32
+#ifdef WIN32
         FILE *f = nullptr;
         if (fopen_s(&f, filename, "wb") != 0 || !f)
-        #else
+#else
         FILE *f = fopen(filename, "wb");
         if (!f)
-        #endif
+#endif
         {
             throw std::runtime_error(std::string("Error abriendo para escribir: ") + filename + " (" + strerror(errno) + ")");
         }
@@ -147,13 +211,13 @@ namespace cmdlib
 
     FILE *safeOpenRead(char *filename)
     {
-        #ifdef WIN32
+#ifdef WIN32
         FILE *f = nullptr;
         if (fopen_s(&f, filename, "rb") != 0 || !f)
-        #else
+#else
         FILE *f = fopen(filename, "rb");
         if (!f)
-        #endif
+#endif
         {
             throw std::runtime_error(std::string("Error abriendo para leer: ") + filename + " (" + strerror(errno) + ")");
         }

@@ -2,6 +2,7 @@
 #define CMDLIB_H
 
 #include <cctype>
+#include <cstdint>
 #include <iostream>
 #include <filesystem>
 #ifdef WIN32
@@ -23,6 +24,15 @@ namespace cmdlib
     char *expandPath(char *path);
     void defaultExt(char *path, char *ext, size_t bufsize);
     void defaultPath(char *path, size_t pathSize, char *basepath);
+
+    // parsers
+    int parseNum(char * str);
+    short bigShort(short l);
+    short littleShort(short l);
+    int bigLong(int l);
+    int littleLong(int l);
+    float bigFloat(float l);
+    float littleFloat(float l);
 
     // files
     FILE *safeOpenWrite(char *filename);
