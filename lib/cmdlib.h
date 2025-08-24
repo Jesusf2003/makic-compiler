@@ -1,15 +1,63 @@
 #ifndef CMDLIB_H
 #define CMDLIB_H
 
-#include <cstdlib>
-#include <cstdarg>
+#include <memory>
 #include <string>
-#include <cctype>
-#include <optional>
-#include <filesystem>
 
-void Cmd_Error(const char *err, ...); // prints a error message
+#include <cstdlib>
+#include <cstddef>
+#include <cstdio>
 
-void Cmd_Copy(const std::string &from, const std::string &to);
+namespace cmdlib
+{
+    
+    struct FileBuffer
+    {
+        unsigned char *data;
+        int length;
+
+        FileBuffer() : data(nullptr), length(0) {}
+
+        ~FileBuffer()
+        {
+            if (data)
+                free(data);
+        }
+
+        // delete copy
+        FileBuffer(const FileBuffer &) = delete;
+        FileBuffer &operator=(const FileBuffer &) = delete;
+
+        // move constructor
+        FileBuffer(FileBuffer &&other) noexcept
+        {
+            data = other.data;
+            length = other.length;
+            other.data = nullptr;
+            other.length = 0;
+        }
+
+        // move assignment
+        FileBuffer &operator=(FileBuffer &&other) noexcept
+        {
+            if (this != &other)
+            {
+                if (data)
+                    free(data);
+                data = other.data;
+                length = other.length;
+                other.data = nullptr;
+                other.length = 0;
+            }
+            return *this;
+        }
+    };
+    
+    // file movements
+    FileBuffer loadFile(const char* path);
+    bool saveFile(const char *path, const unsigned char *data, int& length);
+    bool copyFile(const char *from, const char *to);
+    bool deleteFile(const char *path); // Maybe unneccessary
+}
 
 #endif
