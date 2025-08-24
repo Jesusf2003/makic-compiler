@@ -11,7 +11,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/../bin")
 
 set(SOURCES
     src/main.cpp
-    src/cmdlib.cpp
+    lib/cmdlib.cpp
 )
 set(CMDLIB_INCLUDE
     lib/

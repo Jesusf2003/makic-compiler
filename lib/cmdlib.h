@@ -55,7 +55,7 @@ namespace cmdlib
     
     // file movements
     FileBuffer loadFile(const char* path);
-    bool saveFile(const char *path, const unsigned char *data, int& length);
+    bool saveFile(const char *path, const unsigned char *data, int length);
     bool copyFile(const char *from, const char *to);
     bool deleteFile(const char *path); // Maybe unneccessary
 }
