@@ -1,52 +1,129 @@
 #include "cmdlib.h"
-#include <utility>
-#include <cstring>
+
+#define PATH_SEPARATOR '/'
 
 namespace cmdlib
 {
-    FileBuffer loadFile(const char* path) // returns file buffer data
+    int checkParm(char *check)
     {
-        FileBuffer fb;                  // open file
-        FILE *f = fopen(path, "rb");
-        if (!f) return fb;
-
-        if (fseek(f, 0, SEEK_END) != 0) { fclose(f); return fb; }   // Search into the file
-        long size = ftell(f);
-        if (size < 0) { fclose(f); return fb; }
-        rewind(f);
-
-        fb.length = static_cast<int>(size); // obtain the file size
-        fb.data = (unsigned char*)malloc(fb.length);
-        if (!fb.data) { fclose(f); fb.length = 0; return fb; }
-
-        size_t read = fread(fb.data, 1, fb.length, f);  // reads content
-        fclose(f);
-        if (read != static_cast<size_t>(fb.length))
+        for (int i = 1; i < cargc; i++)
         {
-            free(fb.data);
-            fb.data = nullptr;
-            fb.length = 0;
+            if (!strcasecmp(check, cargv[i]))
+            {
+                return i;
+            }
         }
-        return fb;
+        return 0;
     }
 
-    bool saveFile(const char *path, const unsigned char *data, int length)
+    void getWorkdir(char *out)
     {
-        FILE *f = fopen(path, "wb");
-        if (!f) return false;
-        size_t written = fwrite(data, 1, length, f);
-        fclose(f);
-        return written == static_cast<size_t>(length);
+#ifdef WIN32
+        getcwd(out, 256);
+        strcat(out, "\\");
+#else
+        getwd(out);
+#endif
     }
 
-    bool copyFile(const char *from, const char *to) {
-        FileBuffer fb = loadFile(from);
-        if(!fb.data) return false;
-        return saveFile(to, fb.data, fb.length);
-    }
-
-    bool deleteFile(const char *path)
+    void makeDir(char *path)
     {
-        return std::remove(path) == 0;
+#ifdef WIN32
+        if (_mkdir(path) == 0)
+            return;
+#else
+        if (mkdir(path, 0777) == 0)
+            return;
+#endif
+        if (errno != EEXIST)
+        {
+            std::cerr << "mkdir: " << path << "\n"
+                      << strerror(errno);
+        }
+    }
+
+    char currentDir[1024] = {0};
+    char gamedir[1024];
+    void setDirFromPath(char *path)
+    {
+        if (!path || !*path)
+        {
+            currentDir[0] = '\0';
+            return;
+        }
+        const char* lastSlash = strrchr(path, '/');
+        #ifdef WIN32
+            const char* lastBackslash = strrchr(path, '\\');
+            if (lastBackslash && (!lastSlash || lastBackslash > lastSlash))
+            {
+                lastSlash = lastBackslash;
+            }
+        #endif
+        if (lastSlash)
+        {
+            size_t len = lastSlash - path;
+            if (len >= sizeof(currentDir)) len = sizeof(currentDir) - 1;
+            strncpy(currentDir, path, len);
+            currentDir[len] = '\0';
+        } else {
+            strcpy(currentDir, ".");
+        }
+    }
+
+    char *expandPath(char *path)
+    {
+        static char full[1024];
+        if (currentDir[0] == '\0')
+        {
+            std::cerr << "Expand path was called without current dir set\n";
+            return nullptr;
+        }
+        if (path[0] == '/' || path[0] == '\\' || (path[1] == ':')) return const_cast<char*>(path);
+        snprintf(full, sizeof(full), "%s/%s", currentDir, path);
+        return full;
+    }
+
+    // utils
+    int strncasecmp(const char *s1, const char *s2, int n)
+    {
+        if (n <= 0)
+            return 0;
+        while (n-- && *s1 && *s2)
+        {
+            char c1 = std::toupper(*s1++);
+            char c2 = std::toupper(*s2++);
+            if (c1 != c2)
+                return c1 - c2;
+        }
+        if (n < 0)
+            return 0;
+        return std::toupper(*s1) - std::toupper(*s2);
+    }
+
+    int strcasecmp(char *s1, char *s2)
+    {
+        return strncasecmp(s1, s2, 99999);
+    }
+
+    char *strToUpper(char *start)
+    {
+        char *in = start;
+        while (*in)
+        {
+            *in = std::toupper(*in);
+            in++;
+        }
+        return start;
+    }
+
+    char *strtoLower(char *start)
+    {
+        char *in = start;
+        while (*in)
+        {
+            *in = std::tolower(*in);
+            in++;
+        }
+        return start;
     }
 }

@@ -1,63 +1,30 @@
 #ifndef CMDLIB_H
 #define CMDLIB_H
 
-#include <memory>
-#include <string>
-
-#include <cstdlib>
-#include <cstddef>
-#include <cstdio>
+#include <cctype>
+#include <iostream>
+#ifdef WIN32
+#include <direct.h>
+#else
+#include <unistd.h>
+#endif
 
 namespace cmdlib
 {
-    
-    struct FileBuffer
-    {
-        unsigned char *data;
-        int length;
+    extern int cargc;
+    extern char **cargv;
+    int checkParm(char *check);
+    void getWorkdir(char *out);
+    void makeDir(char *path);
 
-        FileBuffer() : data(nullptr), length(0) {}
+    void setDirFromPath(char *path);
+    char* expandPath(char *path);
 
-        ~FileBuffer()
-        {
-            if (data)
-                free(data);
-        }
-
-        // delete copy
-        FileBuffer(const FileBuffer &) = delete;
-        FileBuffer &operator=(const FileBuffer &) = delete;
-
-        // move constructor
-        FileBuffer(FileBuffer &&other) noexcept
-        {
-            data = other.data;
-            length = other.length;
-            other.data = nullptr;
-            other.length = 0;
-        }
-
-        // move assignment
-        FileBuffer &operator=(FileBuffer &&other) noexcept
-        {
-            if (this != &other)
-            {
-                if (data)
-                    free(data);
-                data = other.data;
-                length = other.length;
-                other.data = nullptr;
-                other.length = 0;
-            }
-            return *this;
-        }
-    };
-    
-    // file movements
-    FileBuffer loadFile(const char* path);
-    bool saveFile(const char *path, const unsigned char *data, int length);
-    bool copyFile(const char *from, const char *to);
-    bool deleteFile(const char *path); // Maybe unneccessary
+    // utils
+    int strncasecmp(const char *s1, const char *s2, int n);
+    int strcasecmp(char *s1, char *s2);
+    char *strToUpper(char *start);
+    char *strtoLower(char *start);
 }
 
 #endif
