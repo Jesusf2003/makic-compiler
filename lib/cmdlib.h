@@ -24,6 +24,16 @@ namespace cmdlib
     void defaultExt(char *path, char *ext, size_t bufsize);
     void defaultPath(char *path, size_t pathSize, char *basepath);
 
+    // files
+    FILE *safeOpenWrite(char *filename);
+    FILE *safeOpenRead(char *filename);
+
+    void safeRead(FILE *f, void* buffer, int count);
+    void safeWrite(FILE *f, void *buffer, int count);
+
+    int loadFile(char *filename, void **bufferptr);
+    void saveFile(char *filename, void *buffer, int count);
+
     // utils
     void stripFilename(char *path);
     void stripExt(char *path);

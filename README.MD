@@ -1,3 +1,3 @@
-# CMD lib para C
+# CMD lib para C++
 
-Aprendiendo a manejar argumentos en C.
+Aprendiendo a manejar argumentos en C++.

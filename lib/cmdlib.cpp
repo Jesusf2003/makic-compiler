@@ -130,6 +130,87 @@ namespace cmdlib
         snprintf(path, pathSize, "%s%s", basepath, temp);
     }
 
+    FILE *safeOpenWrite(char *filename)
+    {
+        #ifdef WIN32
+        FILE *f = nullptr;
+        if (fopen_s(&f, filename, "wb") != 0 || !f)
+        #else
+        FILE *f = fopen(filename, "wb");
+        if (!f)
+        #endif
+        {
+            throw std::runtime_error(std::string("Error abriendo para escribir: ") + filename + " (" + strerror(errno) + ")");
+        }
+        return f;
+    }
+
+    FILE *safeOpenRead(char *filename)
+    {
+        #ifdef WIN32
+        FILE *f = nullptr;
+        if (fopen_s(&f, filename, "rb") != 0 || !f)
+        #else
+        FILE *f = fopen(filename, "rb");
+        if (!f)
+        #endif
+        {
+            throw std::runtime_error(std::string("Error abriendo para leer: ") + filename + " (" + strerror(errno) + ")");
+        }
+        return f;
+    }
+
+    void safeRead(FILE *f, void *buffer, int count)
+    {
+        if ((int)fread(buffer, 1, count, f) != count)
+        {
+            throw std::runtime_error("Error in SafeRead: incompleted or corrupted data");
+        }
+    }
+
+    void safeWrite(FILE *f, void *buffer, int count)
+    {
+        if ((int)fwrite(buffer, 1, count, f) != count)
+        {
+            throw std::runtime_error("Error in SafeWrite: no se pudo escribir todo");
+        }
+    }
+
+    int loadFile(char *filename, void **bufferptr)
+    {
+        FILE *f = safeOpenRead(filename);
+        if (fseek(f, 0, SEEK_END) != 0)
+        {
+            fclose(f);
+            throw std::runtime_error("Error in fseek (loadfile)");
+        }
+        long length = ftell(f);
+        if (length < 0)
+        {
+            fclose(f);
+            throw std::runtime_error("Error in ftell (LoadFile)");
+        }
+        rewind(f);
+        void *buffer = malloc(length);
+        if (!buffer)
+        {
+            fclose(f);
+            throw std::runtime_error("theres no memory for load file");
+        }
+        safeRead(f, buffer, (int)length);
+        fclose(f);
+
+        *bufferptr = buffer;
+        return (int)length;
+    }
+
+    void saveFile(char *filename, void *buffer, int count)
+    {
+        FILE *f = safeOpenWrite(filename);
+        safeWrite(f, buffer, count);
+        fclose(f);
+    }
+
     char *expandPathAndArchive(char *path)
     {
         char *expanded = expandPath((char *)path);
