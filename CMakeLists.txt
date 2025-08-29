@@ -10,20 +10,22 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/../bin")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/../bin")
 
 set(SOURCES
+    src/cmd.cpp
     src/main.cpp
-    lib/cmdlib.cpp
 )
-set(CMDLIB_INCLUDE
-    lib/
-)
+
+find_package(unofficial-readline-win32 CONFIG REQUIRED)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMDLIB_INCLUDE})
+target_include_directories(${PROJECT_NAME} PRIVATE src)
 
 if (WIN32)
     find_package(Threads REQUIRED)
-    target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        Threads::Threads
+        unofficial::readline-win32::readline
+    )
 else()
     target_link_libraries(${PROJECT_NAME} PRIVATE pthread dl m)
 endif()
