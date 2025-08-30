@@ -4,52 +4,28 @@
 #include <cstdlib>
 #include <cstring>
 
-#define MAX_COMMANDS 32
+#define MAX_COMMANDS 128
 
 namespace cmd
 {
-    struct Command
-    {
-        char *name;
-        void (*function)(int argc, char **argv);
-    };
-    inline static Command cmdList[MAX_COMMANDS];
-    inline static int cmdCount = 0;
+    // custom args
+    int cargc = 0;
+    char **cargv = nullptr;
 
-    void addCommand(char *name, void (*function)(int argc, char **argv))
+    // check cmd to the limit
+    int checkNextCommand(const char *check, int last)
     {
-        if (cmdCount < MAX_COMMANDS)
+        for (int i = last + 1; i < cargc; i++)
         {
-            cmdList[cmdCount].name = name;
-            cmdList[cmdCount].function = function;
-            cmdCount++;
+            if (!cargv[i])
+                continue;
+            if (strcmp(check, cargv[i]) == 0)
+                return i;
         }
+        return 0;
     }
-
-    void execCommand(char *input)
+    int checkCommand(const char *cmd)
     {
-        char *argv[16];
-        int argc = 0;
-
-        char *token = strtok(input, " \t\n");
-        while (token && argc < 16)
-        {
-            argv[argc++] = token;
-            token = strtok(NULL, " \t\n");
-        }
-
-        if (argc == 0)
-            return;
-
-        // Buscar comando en la lista
-        for (int i = 0; i < cmdCount; i++)
-        {
-            if (strcmp(argv[0], cmdList[i].name) == 0)
-            {
-                cmdList[i].function(argc, argv);
-                return;
-            }
-        }
-        printf("Unknown command: %s\n", argv[0]);
+        return checkNextCommand(cmd, 0);
     }
 }

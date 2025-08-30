@@ -1,6 +1,8 @@
 namespace cmd
 {
-    void addCommand(char* name, void (*function)(int argc, char** argv));
+    extern int cargc;
+    extern char **cargv;
 
-    void execCommand(char* input);
+    int checkNextCommand(const char *check, int last);
+    int checkCommand(const char *cmd);
 }
