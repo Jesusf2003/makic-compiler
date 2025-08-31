@@ -1,8 +1,9 @@
 #include "shell.h"
+#include "common.h"
 
 #include <cstdio>
 #include <cstdlib>
-#include <cstring>
+#include <string>
 
 namespace shell
 {
@@ -25,6 +26,7 @@ namespace shell
             cmdCount++;
         }
     }
+
     void execCmd(char *input)
     {
         char *argv[16];
