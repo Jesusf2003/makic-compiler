@@ -9,38 +9,44 @@ void cmdEcho(int argc, char **argv)
 {
     if (argc == 1)
     {
-        printf("Provide a text pls\n");
+        std::cout << "Provide a text pls\n";
         return;
     }
     for (int i = 1; i < argc; i++)
     {
-        printf("\n    Say(User): %s \n", argv[i]);
+        std::cout << "  say(user): " << argv[i] << "\n";
     }
-    printf("\n");
+    std::cout << std::endl;
 }
+
+bool running = true;
 
 void cmdQuit(int argc, char **argv)
 {
-    printf("See ya :)\n");
-    exit(0);
+    std::cout << "See ya :)\n";
+    running = false;
+}
+
+void cmdHelp(int argc, char **argv)
+{
+    std::cout << "Avaliable commands:\n";
+    for (int i = 0; i < shell::cmdCount; i++) {
+        std::cout << "  - " << shell::cmdList[i].name << "\n";
+    }
 }
 
 void initCmds()
 {
     shell::addCmd("echo", cmdEcho);
     shell::addCmd("quit", cmdQuit);
+    shell::addCmd("help", cmdHelp);
 }
 
 int main(int argc, char **argv)
 {
     initCmds();
-
     char input[MAX_INPUT];
-    std::cout << "\n"
-              << "      Welcome user!" << "\n"
-              << std::endl;
-
-    while (true)
+    while (running)
     {
         std::cout << "> ";
         if (!fgets(input, sizeof(input), stdin))

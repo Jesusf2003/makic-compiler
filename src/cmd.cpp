@@ -6,7 +6,7 @@ namespace cmd
     int cargc = 0;
     char **cargv = nullptr;
 
-    void defaultExt(char *path, char *ext)
+    void defaultExt(char *path, char *ext, size_t bufsize)
     {
         if (!path || !*path) return;
         char *src = path + strlen(path) - 1;
@@ -15,17 +15,19 @@ namespace cmd
             if (*src == '.') return;
             src--;
         }
-        strcat(path, ext);
+        strncat(path, ext, bufsize - strlen(path) - 1);
     }
 
-    void defaultPath(char *path, char *basepath)
+    void defaultPath(char *path, char *basepath, size_t bufsize)
     {
+        // reduces overflow risks
         char temp[128];
         if (path[0] == PATH_SEPARATOR)
             return;
-        strcpy(temp, path);
-        strcpy(path, basepath);
-        strcat(path, temp);
+        // recieves a buffer size with less size
+        strncpy(temp, path, sizeof(temp) - 1);
+        temp[sizeof(temp) -1] = '\0';
+        snprintf(path, bufsize, "%s%s", basepath, temp);
     }
 
     // check cmd to the limit
@@ -33,15 +35,14 @@ namespace cmd
     {
         for (int i = last + 1; i < cargc; i++)
         {
-            if (!cargv[i])
-                continue;
-            if (strcmp(check, cargv[i]) == 0)
+            if (!cargv[i] && strcmp(check, cargv[i]) == 0)
                 return i;
         }
-        return 0;
+        return -1;
     }
+    
     int checkCmd(const char *cmd)
     {
-        return checkNextCmd(cmd, 0);
+        return checkNextCmd(cmd, -1);
     }
 }
