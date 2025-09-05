@@ -6,7 +6,7 @@
 
 namespace shell
 {
-    void addCmd(char *name, void (*function)(int argc, char **argv))
+    void addCmd(const char *name, void (*function)(int argc, char **argv))
     {
         if (cmdCount < MAX_COMMANDS)
         {
@@ -44,6 +44,6 @@ namespace shell
             }
         }
 
-        printf("Unknown command: %s\n", argv[0]);
+        printf("did you mean...? %s\n", argv[0]);
     }
 }

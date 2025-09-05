@@ -8,26 +8,29 @@ namespace cmd
 
     void defaultExt(char *path, char *ext, size_t bufsize)
     {
-        if (!path || !*path) return;
+        if (!path || !*path)
+            return;
         char *src = path + strlen(path) - 1;
         while (src != path && *src != PATH_SEPARATOR)
         {
-            if (*src == '.') return;
+            if (*src == '.')
+                return;
             src--;
         }
         strncat(path, ext, bufsize - strlen(path) - 1);
     }
 
-    void defaultPath(char *path, char *basepath, size_t bufsize)
+    void defaultPath(char *path, char *basepath)
     {
-        // reduces overflow risks
-        char temp[128];
-        if (path[0] == PATH_SEPARATOR)
+        if (!path || !*path)
             return;
-        // recieves a buffer size with less size
-        strncpy(temp, path, sizeof(temp) - 1);
-        temp[sizeof(temp) -1] = '\0';
-        snprintf(path, bufsize, "%s%s", basepath, temp);
+
+        if (path[0] == PATH_SEPARATOR)
+            return; // ya es ruta absoluta
+
+        char tmp[260];
+        snprintf(tmp, sizeof(tmp), "%s/%s", basepath, path);
+        strcpy(path, tmp);
     }
 
     // check cmd to the limit
@@ -40,7 +43,7 @@ namespace cmd
         }
         return -1;
     }
-    
+
     int checkCmd(const char *cmd)
     {
         return checkNextCmd(cmd, -1);

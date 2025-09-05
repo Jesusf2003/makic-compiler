@@ -1,4 +1,6 @@
 #include "common.h"
+#include <io.h>
+#include <string.h>
 
 namespace shell
 {
@@ -11,6 +13,6 @@ namespace shell
     inline static Command cmdList[MAX_COMMANDS];
     inline static int cmdCount = 0;
 
-    void addCmd(char *name, void (*function)(int argc, char **argv));
+    void addCmd(const char *name, void (*function)(int argc, char **argv));
     void execCmd(char *input);
 }
