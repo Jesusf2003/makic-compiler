@@ -1,2 +1,0 @@
-#define MAX_COMMANDS 128
-#define MAX_INPUT 256

@@ -1,4 +1,5 @@
 #include "shell.h"
+#include "cmd.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -19,31 +20,39 @@ namespace shell
 
     void execCmd(char *input)
     {
-        char *argv[16];
-        int argc = 0;
+        // Vinculamos a los globales del namespace cmd
+        cmd::cargc = 0;
+        static char *argvStorage[16]; // almacenamiento fijo
+        cmd::cargv = argvStorage;
 
         char *p = input;
-        while (*p && argc < 16)
+        while (*p && cmd::cargc < 16)
         {
-            while (*p && isspace(*p)) p++;
-            if (!*p) break;
-            argv[argc++] = p;
-            while (*p && !isspace(*p)) p++;
-            if (*p) *p++ = '\0';
+            while (*p && isspace(*p))
+                p++;
+            if (!*p)
+                break;
+
+            cmd::cargv[cmd::cargc++] = p;
+
+            while (*p && !isspace(*p))
+                p++;
+            if (*p)
+                *p++ = '\0';
         }
 
-        if (argc == 0)
+        if (cmd::cargc == 0)
             return;
-        
+
         for (int i = 0; i < cmdCount; i++)
         {
-            if (strcmp(argv[0], cmdList[i].name) == 0)
+            if (strcmp(cmd::cargv[0], cmdList[i].name) == 0)
             {
-                cmdList[i].function(argc, argv);
+                cmdList[i].function(cmd::cargc, cmd::cargv);
                 return;
             }
         }
 
-        printf("did you mean...? %s\n", argv[0]);
+        cmd::printError(0, "Unknown command: %s", cmd::cargv[0]);
     }
 }

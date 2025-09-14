@@ -3,19 +3,26 @@
 Aprendiendo a manejar argumentos en C++ y creando un shell app para demostración.
 
 # Generic Commands to show base folder data
-```bash
-> get /*shows all base dir data*/
 
-> set basedir default / custom basedir
+## Game command
+```sh
+game ls
 
-> get basedir /*shows the default dir*/
+    Command options:
+        > game mod_name
+        > game info mod_name
 
-> set game modname
+    Avaliable games:
+        * Id1   (basedir)
+        * ad    (mod)
+        * 2hand (addon)
 
-> set game /*show the game mod details when is provided*/
+game game_name info
+
+    Game details:
+        title: TITLE
+        game: GAME_NAME
 ```
-
-# Including tool commands
 
 # Reference
 - [Quake-Tools - ID Software](https://github.com/id-Software/Quake-Tools)

@@ -1,6 +1,7 @@
-#include "common.h"
 #include <io.h>
 #include <string.h>
+
+#define MAX_COMMANDS    128
 
 namespace shell
 {
