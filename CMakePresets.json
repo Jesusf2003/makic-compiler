@@ -12,8 +12,8 @@
             }
         },
         {
-            "name": "Ninja",
-            "generator": "Ninja",
+            "name": "MinGW64",
+            "generator": "MinGW Makefiles",
             "binaryDir": "${sourceDir}/build",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",

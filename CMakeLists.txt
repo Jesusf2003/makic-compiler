@@ -1,29 +1,21 @@
-cmake_minimum_required(VERSION 3.30)
+cmake_minimum_required(VERSION 3.30.3)
 
-project(CStuff VERSION 0.1.0 LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 17)
+project(makic VERSION 0.1.0 LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS NO)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/../bin")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/../bin")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/../bin")
 
-set(SOURCES
-    src/cmd.cpp
-    src/shell.cpp
-    src/main.cpp
+set(COMPILER_SRC
+    src/util.cpp
+    src/makic.cpp
+    src/builder.cpp
+    src/lexer.cpp
 )
 
-add_executable(${PROJECT_NAME} ${SOURCES})
-
+add_executable(${PROJECT_NAME} ${COMPILER_SRC})
 target_include_directories(${PROJECT_NAME} PRIVATE src)
 
-if (WIN32)
-    find_package(Threads REQUIRED)
-    target_link_libraries(${PROJECT_NAME} PRIVATE
-        Threads::Threads
-    )
-else()
-    target_link_libraries(${PROJECT_NAME} PRIVATE pthread dl m)
-endif()
+target_compile_options(${PROJECT_NAME} PRIVATE -Wno-trigraphs)
