@@ -1041,41 +1041,49 @@ int main(int argc, char **argv)
         strcpy(srcdir, argv[p + 1]);
         strcat(srcdir, "/");
         printf("Source dir: %s\n", srcdir);
-    } else { strcpy(srcdir, ""); }
+    }
+    else
+    {
+        strcpy(srcdir, "");
+    }
     InitData();
     sprintf(filename, "%sprogs.src", srcdir);
     LoadFile(filename, (void **)&src);
     src = COM_Parse(src);
-    if (!src) Error("No destination filename.  qcc -help for info.\n");
+    if (!src)
+        Error("No destination filename.  qcc -help for info.\n");
     strcpy(destfile, com_token);
     printf("outputfile: %s\n", destfile);
     pr_dumpasm = false;
-    PR_BeginCompilation((char*)malloc(0x100000), 0x100000);
+    PR_BeginCompilation((char *)malloc(0x100000), 0x100000);
     do
-        {
-            src = COM_Parse(src);
-            if (!src) break;
-            sprintf(filename, "%s%s", srcdir, com_token);
-            printf("compiling %s\n", filename);
-            LoadFile(filename, (void **)&src2);
-            if (!PR_CompileFile(src2, filename)) exit(1);
+    {
+        src = COM_Parse(src);
+        if (!src)
+            break;
+        sprintf(filename, "%s%s", srcdir, com_token);
+        printf("compiling %s\n", filename);
+        LoadFile(filename, (void **)&src2);
+        if (!PR_CompileFile(src2, filename))
+            exit(1);
 
-        }
-    while (1);
+    } while (1);
 
-    if (!PR_FinishCompilation()) Error("compilation errors");
+    if (!PR_FinishCompilation())
+        Error("compilation errors");
     p = CheckParm("-asm");
     if (p)
     {
         for (p++; p < argc; p++)
         {
-            if (argv[p][0] == '-') break;
+            if (argv[p][0] == '-')
+                break;
             PrintFunction(argv[p]);
         }
     }
     if (CheckParm("-progdefs"))
     {
-        crc = PR_WriteProgdefs("progdefs.h");
+        crc = PR_WriteProgdefs("progdefs.txt");
     }
     WriteData(crc);
     BspModels();
