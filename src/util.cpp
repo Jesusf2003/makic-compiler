@@ -18,6 +18,7 @@
 */
 
 #include "util.h"
+#include "console.h"
 #include <sys/time.h>
 
 #define PATHSEPERATOR '/'
@@ -176,26 +177,6 @@ char *strlower(char *start)
 
 /*
 =================
-Error
-
-For abnormal program terminations
-=================
-*/
-void Error(char *error, ...)
-{
-    va_list argptr;
-
-    printf("\n************ ERROR ************\n");
-
-    va_start(argptr, error);
-    vprintf(error, argptr);
-    va_end(argptr);
-    printf("\n");
-    exit(1);
-}
-
-/*
-=================
 CheckParm
 
 Checks for the given parameter in the program's command line arguments
@@ -228,7 +209,7 @@ int SafeOpenWrite(char *filename)
     handle = open(filename, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, 0666);
 
     if (handle == -1)
-        Error("Error opening %s: %s", filename, strerror(errno));
+        LogError("Error opening %s: %s", filename, strerror(errno));
 
     return handle;
 }
@@ -240,7 +221,9 @@ int SafeOpenRead(char *filename)
     handle = open(filename, O_RDONLY | O_BINARY);
 
     if (handle == -1)
-        Error("Error opening %s: %s", filename, strerror(errno));
+    {
+        LogError("Error opening %s: %s", filename, strerror(errno));
+    }
 
     return handle;
 }
@@ -248,13 +231,17 @@ int SafeOpenRead(char *filename)
 void SafeRead(int handle, void *buffer, long count)
 {
     if (read(handle, buffer, count) != count)
-        Error("File read failure");
+    {
+        LogError("File read failure");
+    }
 }
 
 void SafeWrite(int handle, void *buffer, long count)
 {
     if (write(handle, buffer, count) != count)
-        Error("File write failure");
+    {
+        LogError("File write failure");
+    }
 }
 
 void *SafeMalloc(long size)
@@ -264,7 +251,9 @@ void *SafeMalloc(long size)
     ptr = malloc(size);
 
     if (!ptr)
-        Error("Malloc failure for %lu bytes", size);
+    {
+        LogError("Malloc failure for %lu bytes", size);
+    }
 
     return ptr;
 }
@@ -305,7 +294,7 @@ void SaveFile(char *filename, void *buffer, long count)
     close(handle);
 }
 
-void DefaultExtension(char *path, char *extension)
+void DefaultExtension(char *path, const char *extension)
 {
     char *src;
     //
@@ -443,7 +432,7 @@ long ParseHex(char *hex)
         else if (*str >= 'A' && *str <= 'F')
             num += 10 + *str - 'A';
         else
-            Error("Bad hex number: %s", hex);
+            LogError("Bad hex number: %s", hex);
         str++;
     }
 

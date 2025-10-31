@@ -17,16 +17,16 @@
     See file, 'COPYING', for details.
 */
 
-#include <stdio.h>
+
 #include <string.h>
 #include <stdbool.h>
-#include <stdlib.h>
+
 #include <errno.h>
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/file.h>
-#include <stdarg.h>
+
 
 #ifdef NeXT
 #include <libc.h>
@@ -49,7 +49,6 @@ char *strlower(char *in);
 
 double I_FloatTime(void);
 
-void Error(char *error, ...);
 int CheckParm(const char *check);
 
 int SafeOpenWrite(char *filename);
@@ -61,7 +60,7 @@ void *SafeMalloc(long size);
 long LoadFile(char *filename, void **bufferptr);
 void SaveFile(char *filename, void *buffer, long count);
 
-void DefaultExtension(char *path, char *extension);
+void DefaultExtension(char *path, const char *extension);
 void DefaultPath(char *path, char *basepath);
 void StripFilename(char *path);
 void StripExtension(char *path);

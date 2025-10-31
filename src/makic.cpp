@@ -73,7 +73,7 @@ void BspModels(void)
     if (!p)
         return;
     if (p == myargc - 1)
-        Error("-bspmodels must preceed a game directory");
+        LogError("-bspmodels must preceed a game directory");
     gamedir = myargv[p + 1];
 
     for (i = 0; i < nummodels; i++)
@@ -347,7 +347,7 @@ def_t *PR_DefForFieldOfs(gofs_t ofs)
         if (*((int *)&pr_globals[d->ofs]) == ofs)
             return d;
     }
-    Error("PR_DefForFieldOfs: couldn't find %i", ofs);
+    LogError("PR_DefForFieldOfs: couldn't find %i", ofs);
     return NULL;
 }
 
@@ -652,7 +652,7 @@ Returns a crc of the header, to be stored in the progs file for comparison
 at load time.
 ============
 */
-int PR_WriteProgdefs(char *filename)
+int PR_WriteProgdefs(const char *filename)
 {
     def_t *d;
     FILE *f;
@@ -753,7 +753,7 @@ void PrintFunction(char *name)
         if (!strcmp(name, strings + functions[i].s_name))
             break;
     if (i == numfunctions)
-        Error("No function names \"%s\"", name);
+        LogError("No function names \"%s\"", name);
     df = functions + i;
 
     printf("Statements for %s:\n", name);
@@ -797,7 +797,9 @@ void Sys_mkdir(char *path)
     if (mkdir(path) != -1)
         return;
     if (errno != EEXIST)
-        Error("mkdir %s: %s", path, strerror(errno));
+    {
+        LogError("mkdir %s: %s", path, strerror(errno));
+    }
 }
 
 /*
@@ -834,7 +836,7 @@ void PackFile(char *src, char *name)
     char buf[4096];
 
     if ((byte *)pf - (byte *)pfiles > sizeof(pfiles))
-        Error("Too many files in pak file");
+        LogError("Too many files in pak file");
 
     in = SafeOpenRead(src);
     remaining = filelength(in);
@@ -1051,7 +1053,7 @@ int main(int argc, char **argv)
     LoadFile(filename, (void **)&src);
     src = COM_Parse(src);
     if (!src)
-        Error("No destination filename.  qcc -help for info.\n");
+        LogError("No destination filename.  qcc -help for info.\n");
     strcpy(destfile, com_token);
     printf("outputfile: %s\n", destfile);
     pr_dumpasm = false;
@@ -1070,7 +1072,9 @@ int main(int argc, char **argv)
     } while (1);
 
     if (!PR_FinishCompilation())
-        Error("compilation errors");
+    {
+        LogError("compilation errors");
+    }
     p = CheckParm("-asm");
     if (p)
     {

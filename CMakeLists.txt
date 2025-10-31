@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.30.3)
 
-project(makic VERSION 0.1.0 LANGUAGES CXX)
+project(makic VERSION 0.1.0 LANGUAGES CXX C)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -10,6 +10,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/../bin")
 
 set(COMPILER_SRC
     src/util.cpp
+    src/console.cpp
     src/makic.cpp
     src/builder.cpp
     src/lexer.cpp

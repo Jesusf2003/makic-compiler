@@ -509,7 +509,7 @@ Issues an error if the current token isn't equal to string
 Gets the next token
 =============
 */
-void PR_Expect(char *string)
+void PR_Expect(const char *string)
 {
     if (strcmp(string, pr_token))
         PR_ParseError("expected %s, found %s", string, pr_token);
@@ -545,7 +545,7 @@ char *PR_ParseName(void)
     static char ident[MAX_NAME];
 
     if (pr_token_type != tt_name)
-        PR_ParseError("not a name");
+        LogError("not a name");
     if (strlen(pr_token) >= MAX_NAME - 1)
         PR_ParseError("name too long");
     strcpy(ident, pr_token);

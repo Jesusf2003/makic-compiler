@@ -260,7 +260,7 @@ void PrecacheSound(def_t *e, int ch)
         if (!strcmp(n, precache_sounds[i]))
             return;
     if (numsounds == MAX_SOUNDS)
-        Error("PrecacheSound: numsounds == MAX_SOUNDS");
+        LogError("PrecacheSound: numsounds == MAX_SOUNDS");
     strcpy(precache_sounds[i], n);
     if (ch >= '1' && ch <= '9')
         precache_sounds_block[i] = ch - '0';
@@ -281,7 +281,7 @@ void PrecacheModel(def_t *e, int ch)
         if (!strcmp(n, precache_models[i]))
             return;
     if (numsounds == MAX_SOUNDS)
-        Error("PrecacheModels: numsounds == MAX_SOUNDS");
+        LogError("PrecacheModels: numsounds == MAX_SOUNDS");
     strcpy(precache_models[i], n);
     if (ch >= '1' && ch <= '9')
         precache_models_block[i] = ch - '0';
@@ -302,7 +302,7 @@ void PrecacheFile(def_t *e, int ch)
         if (!strcmp(n, precache_files[i]))
             return;
     if (numfiles == MAX_FILES)
-        Error("PrecacheFile: numfiles == MAX_FILES");
+        LogError("PrecacheFile: numfiles == MAX_FILES");
     strcpy(precache_files[i], n);
     if (ch >= '1' && ch <= '9')
         precache_files_block[i] = ch - '0';
@@ -691,7 +691,9 @@ function_t *PR_ParseImmediateStatements(type_t *type)
         defs[i] = PR_GetDef(type->parm_types[i], pr_parm_names[i], pr_scope, true);
         f->parm_ofs[i] = defs[i]->ofs;
         if (i > 0 && f->parm_ofs[i] < f->parm_ofs[i - 1])
-            Error("bad parm order");
+        {
+            LogError("bad parm order");
+        }
     }
 
     f->code = numstatements;
@@ -889,7 +891,7 @@ compiles the 0 terminated text, adding defintions to the pr structure
 bool PR_CompileFile(char *string, char *filename)
 {
     if (!pr.memory)
-        Error("PR_CompileFile: Didn't clear");
+        LogError("PR_CompileFile: Didn't clear");
 
     PR_ClearGrabMacros(); // clear the frame macros
 

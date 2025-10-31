@@ -18,6 +18,8 @@
 */
 
 #include "util.h"
+#include "console.h"
+#include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <setjmp.h>
@@ -148,7 +150,7 @@ type_t *PR_ParseType(void);
 char *PR_ParseName(void);
 
 bool PR_Check(char *string);
-void PR_Expect(char *string);
+void PR_Expect(const char *string);
 void PR_ParseError(char *error, ...);
 
 extern jmp_buf pr_parse_abort; // longjump with this on parse error
