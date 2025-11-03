@@ -487,7 +487,7 @@ def_t *PR_Expression(int priority)
                 if (e2->type->aux_type)
                     type_c = e2->type->aux_type->type;
                 else
-                    type_c = etype_t::ev_error; // not a field
+                    type_c = -1; // not a field
             }
             else
                 type_c = ev_void;

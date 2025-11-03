@@ -18,7 +18,6 @@
 */
 
 #include "makic.h"
-#include <iostream>
 
 char destfile[1024];
 
@@ -1020,11 +1019,11 @@ void CopyFiles(void)
 
 void help()
 {
-    std::cout << "makic looks for progs.src in the current directory." << std::endl;
-    std::cout << "to look in a different directory: qcc -src <directory>" << std::endl;
-    std::cout << "to build a clean data tree: qcc -copy <srcdir> <destdir>" << std::endl;
-    std::cout << "to build a clean pak file: qcc -pak <srcdir> <packfile>" << std::endl;
-    std::cout << "to bsp all bmodels: qcc -bspmodels <gamedir>" << std::endl;
+    printf("makic looks for progs.src in the current directory.");
+    printf("to look in a different directory: qcc -src <directory>");
+    printf("to build a clean data tree: qcc -copy <srcdir> <destdir>");
+    printf("to build a clean pak file: qcc -pak <srcdir> <packfile>");
+    printf("to bsp all bmodels: qcc -bspmodels <gamedir>");
 }
 
 int main(int argc, char **argv)
