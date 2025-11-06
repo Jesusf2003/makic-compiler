@@ -1,20 +1,20 @@
-#include <stdio.h>
-#include <stdarg.h>
-#include <stdlib.h>
+#include <iostream>
+#include <string.h>
 
-#define ANSI_COLOR_RED      "\x1b[31m"
-#define ANSI_COLOR_BRIGHT_RED "\x1b[91m" // Rojo brillante
-#define ANSI_COLOR_GREEN    "\x1b[32m"
-#define ANSI_COLOR_YELLOW   "\x1b[33m"
-#define ANSI_COLOR_RESET    "\x1b[0m"
+/**
+ * @name Usage
+ * Shows usage info
+ */
+void Usage();
 
-// syntax errors/warns
+/**
+ * @name Help
+ * Shows help info
+ */
+void Help();
 
-// compiler errors/warn
-
-// parm errors/warn
-
-// resume errors/warn if is added -Wall
-
-void LogError(const char *error, ...);
-void logWarn(const char *error, ...);
+/**
+ * @name Version
+ * Shows version info
+ */
+void Version();
