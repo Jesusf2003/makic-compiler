@@ -1,0 +1,12 @@
+TO-DO
+
+* Leer progs.src y scripts
+* Binario con extensión .dat
+
+Ideas
+
+* Agregar hexadecimales?
+* Convertir structs en objetos?
+* Dar propiedades a tipos de variables como integer, short, string, etc.
+* String buffers para consola y game screen
+* Probar con Docker

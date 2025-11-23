@@ -1,0 +1,54 @@
+Lenguaje MakiC
+
+Matemática: + - / *
+
+    a + b
+    a - b
+    a / b
+    a * b
+
+Caracteres: , . ; : " ' ! \ / ? % & * - _ # @
+
+Delimitadores: ( ) [ ] { }
+
+    (a + b), a[b], {a, b}
+
+Comparadores: > < >= <= == && %% ||
+
+    a > b
+    a < b
+    a >= b
+    a <= b
+
+    a == b
+    a && b
+    a %% b
+    a || b
+
+Tipos: int, char, bool, float, void, double
+
+    void a -> nada
+    int a -> number
+    char a -> character
+    bool a -> boolean
+    float a
+    double a
+
+Tipos 2: string, long, short, enum, struct
+
+Condicionales: if, else, else if, while, for, break
+
+    if (a) {}
+    if (a) {} else {}
+    if (a) {} else if (b) {}
+    while (a) {}
+    for (a; b; c++) {}
+    break -> for break or interrupt condicional
+
+Identificadores
+
+Define constantes
+
+    #define A 1
+    #define A "a" -> string / char
+    #define A 'a' -> char
