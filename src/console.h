@@ -1,5 +1,11 @@
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
+
+#define DIR_SEPARATOR_CHAR '\\'
+#define DIR_SEPARATOR_STR  "\\"
+
+#define IS_DIR_SEPARATOR(c) ((c) == '/' || (c) == '\\')
 
 typedef enum {
     CMD_RED,
