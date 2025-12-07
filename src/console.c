@@ -1,9 +1,7 @@
 #include "console.h"
 
-void Usage()
-{
-    printf("usage: makic -src <directory>\n");
-}
+int myargc;
+char **myargv;
 
 void Help()
 {
@@ -22,4 +20,15 @@ void Version()
 void Error(int errtype, char *err, va_list parms)
 {
     printf("Error founded:\n");
+}
+
+int cmd_parm(const char *parm)
+{
+    if (myargv == NULL || parm == NULL) return 0;
+    for (int i = 1; i < myargc; i++)
+    {
+        if (myargv[i] == NULL) continue;
+        if (!strcmp(parm, myargv[i])) return i;
+    }
+    return 0;
 }

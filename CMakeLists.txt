@@ -13,6 +13,7 @@ set(COMPILER_SRC
     src/builder.c
     src/console.c
     src/makic.c
+    src/util_io.c
 )
 
 add_executable(${PROJECT_NAME} ${COMPILER_SRC})

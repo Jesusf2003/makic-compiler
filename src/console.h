@@ -1,11 +1,5 @@
-#include <string.h>
-#include <stdio.h>
 #include <stdlib.h>
-
-#define DIR_SEPARATOR_CHAR '\\'
-#define DIR_SEPARATOR_STR  "\\"
-
-#define IS_DIR_SEPARATOR(c) ((c) == '/' || (c) == '\\')
+#include "util.h"
 
 typedef enum {
     CMD_RED,
@@ -26,12 +20,10 @@ typedef enum {
     WARN_UNEXPECTED
 } cmdwarn_e;
 
+extern int myargc;
+extern char **myargv;
+
 /* GENERIC MESSAGES */
-/**
- * @name Usage
- * Shows usage info
- */
-void Usage();
 
 /**
  * @name Help
@@ -56,3 +48,12 @@ void Version();
 void Message(int errType, char *msg, va_list parms);
 void Error(int errType, char *err, va_list parms);
 void Warning(int warnType, char *msg, va_list parms);
+
+// cmd
+/**
+ * Search parms in command line
+ * @param argc arg counter
+ * @param argv arg var list
+ * @param parm parm to search (e.j.: -src)
+ */
+int cmd_parm(const char *parm);
