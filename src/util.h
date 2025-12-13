@@ -11,6 +11,6 @@
 #define IS_DIR_SEPARATOR(c) ((c) == '/' || (c) == '\\')
 
 // file system
-FILE *openRead(const char *filename);
-void read(FILE *f, void *buffer, size_t count);
+FILE *SafeOpenRead(const char *filename);
+void SafeRead(FILE *f, void *buffer, size_t count);
 long fileLength(FILE *f);
