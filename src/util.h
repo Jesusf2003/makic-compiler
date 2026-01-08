@@ -14,3 +14,4 @@
 FILE *SafeOpenRead(const char *filename);
 void SafeRead(FILE *f, void *buffer, size_t count);
 long fileLength(FILE *f);
+void CreatePath(char *path);

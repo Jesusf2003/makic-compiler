@@ -3,31 +3,33 @@
 
 #define MAX_PATH_LENGTH 1024
 
-int loadProgsFile(char *filename, void **bufferptr)
+size_t loadProgsFile(char *filename, void **bufferptr)
 {
-    FILE *f; size_t length; void *buffer;
-
-    printf("Reading progs.src file...\n");
+    FILE *f;
+    size_t length;
+    void *buffer;
     f = SafeOpenRead(filename);
-    length = (size_t) fileLength(f);
+    length = (size_t)fileLength(f);
     buffer = malloc(length + 1);
-    if (!buffer) fprintf(stderr, "%s failed for %lu bytes.\n", __thisfunc__, (unsigned long)length);
+    if (!buffer) {
+        fprintf(stderr, "Error: No se pudo asignar memoria para %s\n", filename);
+        fclose(f);
+        return 1;
+    }
     ((char *)buffer)[length] = 0;
     SafeRead(f, buffer, length);
-    printf("%s\n", (char*)buffer);
     fclose(f);
     *bufferptr = buffer;
-    return length;
+    return (int)length;
 }
 
 /// Starts program
 int main(int argc, char **argv)
 {
     void *src = NULL; // saves source dir path
-    char *nameptr;
-    char filename[MAX_PATH_LENGTH]; // saves full path of file
-    char srcdir[MAX_PATH_LENGTH];
-    const char *default_name = "progs.src";
+    char filename[MAX_PATH_LENGTH] = {0}; // saves full path of file
+    char srcdir[MAX_PATH_LENGTH] = {0};
+    const char *def_prog_name = "progs.src";
 
     myargc = argc;
     myargv = argv;
@@ -53,31 +55,39 @@ int main(int argc, char **argv)
         Version();
         return 0;
     }
+    // - makic -src <path>
     int parm = cmd_parm("-src");
     if (parm != 0)
     {
-        if (parm + 1 >= argc)
+        if (parm + 1 < argc)
         {
-            printf("No source dirname specified with -src.\n");
-        }
-        strncpy(srcdir, argv[parm + 1], MAX_PATH_LENGTH - 1);
-        srcdir[MAX_PATH_LENGTH - 1] = '\0';
-        int srcp = strlen(srcdir);
-        if (srcp > 0 && !IS_DIR_SEPARATOR(srcdir[srcp - 1]))
-        {
-            if (srcp < MAX_PATH_LENGTH - 1)
+            snprintf(srcdir, sizeof(srcdir), "%s", argv[parm + 1]);
+            size_t len = strlen(srcdir);
+            if (len > 0 && !IS_DIR_SEPARATOR(srcdir[len - 1]))
             {
-                srcdir[srcp] = DIR_SEPARATOR_CHAR;
-                srcdir[srcp + 1] = '\0';
+                if (len < MAX_PATH_LENGTH - 1)
+                {
+                    srcdir[len] = DIR_SEPARATOR_CHAR;
+                    srcdir[len + 1] = '\0';
+                }
             }
-            strncpy(filename, srcdir, MAX_PATH_LENGTH - 1);
-            filename[MAX_PATH_LENGTH - 1] = '\0';
-            nameptr = strchr(filename, '\0');
+            printf("Source directory: %s\n", srcdir);
         }
-        printf("Source directory: %s\n", srcdir);
+        else
+        {
+            fprintf(stderr, "Error: No source directory specified with -src.\n");
+            return 1;
+        }
     }
-    snprintf(filename, MAX_PATH_LENGTH, "%s%s", srcdir, default_name);
+    int filep = cmd_parm("-filesrc");
+    if (filep != 0 && (filep + 1) < argc)
+    {
+        def_prog_name = argv[filep + 1];
+        printf("Custom source file: %s\n", def_prog_name);
+    }
+    snprintf(filename, sizeof(filename), "%s%s", srcdir, def_prog_name);
+    printf("Loading %s\n", filename);
     loadProgsFile(filename, &src);
-    free(src);
+    if (src) free(src);
     return 0;
 }

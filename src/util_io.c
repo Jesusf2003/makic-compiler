@@ -27,3 +27,15 @@ void SafeRead(FILE *f, void *buffer, size_t count)
 {
     if (fread(buffer, 1, count, f) != (size_t)count) printf("Failed read failure");
 }
+
+void CreatePath(char *path)
+{
+    char *ofs;
+    for (ofs = path + 1; *ofs; ofs++)
+    {
+        if (*ofs == '/')
+        {
+            *ofs = 0;
+        }
+    }
+}
