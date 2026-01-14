@@ -1,97 +1,88 @@
-#include "builder.h"
-#include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdint.h>
 
-#define MAX_STRINGS 	 1048576
-#define MAX_GLOBALS	 524288
-#define MAX_FIELDS	 2048
-#define MAX_STATEMENTS	 524288
-#define MAX_FUNCTIONS	 8192
+#define MAKIC_DEFINE_FLAGS
+#define MAKIC_TYPE_FLAGS
 
-#define MAX_SOUNDS	 2048
-#define MAX_MODELS	 2048
-#define MAX_FILES	 2048
-#define MAX_DATA_PATH	 64
-#define MAX_ERRORS	 10
-#define MAX_NAME	 64
-
-#define OFS_NULL 	 0
-#define OFS_PARM 	 1
-#define OFS_RETURN 	 2
-#define RESERVED_OFS 	 3
-
-#define MAX_REGS	 262144
-#define MAX_PARMS  	 8
-
-// type of data in makic
-typedef enum {
-    mc_error = -1,
-    mc_void = 0,
-    mc_string,
-    mc_int,
-    mc_bool,
-    mc_float,
-    mc_entity,
-    mc_field,
-    mc_function,
-    mc_pointer,
-} mctype_e;
-
-// type of token
-typedef enum {
-    tt_eof, // end of file
-    tt_name, // is an alphanumeric name token
-    tt_punct, // code punctuation
-    tt_immediate, // immediate / type of value like string, float, vector
-} token_type_e;
-
-typedef enum {
-    str_global,
-    str_local,
-    str_param,
-    str_value, // no asignable
-    str_return, // no asignable
-} store_type_e;
-
-typedef enum {
-    // basic math
-    OP_MUL, OP_DIV,
-    OP_ADD, OP_SUB,
-    
-    // comparison
-    OP_EQ, OP_NE, OP_LE,
-    OP_GE, OP_LT, OP_GT,
-    OP_IF, OP_IFNOT, OP_NOT,
-    OP_AND, OP_OR, OP_BITAND, OP_BITOR,
-
-    // storage
-    OP_STORE, OP_STOREP,
-
-    // compiler
-    OP_LOAD, OP_ADDRESS,
-    OP_CALL, OP_GOTO, OP_STATE, OP_DONE,
-    OP_RETURN,
-} opcode_e;
-
-typedef int gofs_t;
-
-// Define a type in makic
-typedef struct mc_type_s
+//
+#if 1
+/* Helpers to allow for a whole lot of flags. Otherwise we'd limit
+ * to 32 or 64 -f options...
+ */
+typedef struct
 {
-    mctype_e type;
-    struct def_s *def;
-    struct mc_type_s *next;
-    struct mc_type_s *aux_type;
-    int num_parms;
-    struct mc_type_s *parm_types[MAX_PARMS]; 
-} mc_type_t;
+    size_t idx;  /* index into an array of 32 bit words */
+    uint8_t bit; /* bit index for the 8 bit group idx points to */
+} LongBit;
+#define LONGBIT(bit) {((bit) / 32), ((bit) % 32)}
+#define LONGBIT_SET(B, I) ((B).idx = (I) / 32, (B).bit = ((I) % 32))
+#else
+typedef uint32_t longbit;
+#define LONGBIT(bit) (bit)
+#define LONGBIT_SET(B, I) ((B) = (I))
+#endif
 
-typedef struct mc_def_s
+enum
 {
-    mc_type_t *type;
+    #define MAKIC_TYPE_FLAGS
+    #define MAKIC_DEFINE_FLAG(X) X,
+    #include "opts.def"
+    COUNT_FLAGS
+};
+enum
+{
+    #define MAKIC_TYPE_WARNS
+    #define MAKIC_DEFINE_FLAG(X) WARN_##X,
+    #include "opts.def"
+    COUNT_WARNINGS
+};
+enum
+{
+    #define MAKIC_TYPE_OPTIMIZATIONS
+    #define MAKIC_DEFINE_FLAG(NAME, MIN_O) OPTIM_##NAME,
+    #include "opts.def"
+    COUNT_OPTIMIZATIONS
+};
+enum
+{
+    #define MAKIC_TYPE_OPTIONS
+    #define MAKIC_DEFINE_FLAG(X) OPTION_##X,
+    #include "opts.def"
+    OPTION_COUNT
+};
+
+// opts
+typedef struct {
+    union
+    {
+        bool b;
+        uint16_t u16;
+        uint32_t u32;
+        union
+        {
+            char *p;
+            const char *c;
+        } str;
+    } data;
+    bool allocated;
+} opt_value_t;
+
+typedef struct
+{
+    opt_value_t options[OPTION_COUNT];
+    uint32_t flags[1 + (COUNT_FLAGS / 32)];
+    uint32_t warn[1 + (COUNT_WARNINGS / 32)];
+    uint32_t werror[1 + (COUNT_WARNINGS / 32)];
+    uint32_t warn_backup[1 + (COUNT_WARNINGS / 32)];
+    uint32_t werror_backup[1 + (COUNT_WARNINGS / 32)];
+    uint32_t optimization[1 + (COUNT_OPTIMIZATIONS / 32)];
+    bool optimizeoff; /* True when -O0 */
+} opts_cmd_t;
+extern opts_cmd_t opts;
+
+typedef struct
+{
     const char *name;
-    struct mc_def_s *next;
-    gofs_t ofs;
-    struct mc_def_s *scope;
-    int initialized, ref_count;
-    struct mc_def_t *parentVector;
-} mc_def_t;
+    LongBit bit;
+} opts_flag_def_t;

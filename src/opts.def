@@ -1,0 +1,21 @@
+#ifndef MAKIC_DEFINE_FLAGS
+#   error "bad opts.def usage"
+#endif
+
+#ifdef MAKIC_TYPE_FLAGS
+#endif
+
+#ifdef MAKIC_TYPE_WARNS
+#endif
+
+#ifdef MAKIC_TYPE_OPTIMIZATIONS
+#endif
+
+#ifdef MAKIC_TYPE_OPTIONS
+#endif
+
+#undef MAKIC_TYPE_FLAGS
+#undef MAKIC_TYPE_WARNS
+#undef MAKIC_TYPE_OPTIONS
+#undef MAKIC_TYPE_OPTIMIZATIONS
+#undef MAKIC_DEFINE_FLAG
